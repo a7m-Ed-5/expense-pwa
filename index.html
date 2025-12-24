@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1220" />
+  <meta name="description" content="تطبيق مصاريف شخصية يعمل بدون إنترنت (PWA) مع دعم كامل للغة العربية واتجاه RTL." />
+
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+
+  <title>مصاريفي</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">₪</div>
+      <div>
+        <div class="title">مصاريفي</div>
+        <div class="subtitle">تتبع الدخل والمصاريف — يعمل بدون إنترنت</div>
+      </div>
+    </div>
+
+    <button id="installBtn" class="btn btn-ghost hidden" type="button">تثبيت التطبيق</button>
+  </header>
+
+  <nav class="tabs" aria-label="التنقل">
+    <button class="tab active" data-view="dashboard">لوحة التحكم</button>
+    <button class="tab" data-view="income">الدخل</button>
+    <button class="tab" data-view="expenses">المصاريف</button>
+    <button class="tab" data-view="reports">التقارير</button>
+    <button class="tab" data-view="settings">الإعدادات</button>
+  </nav>
+
+  <main class="container">
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="view active" aria-label="لوحة التحكم">
+      <div class="card">
+        <div class="card-title">فلترة الفترة</div>
+
+        <div class="row">
+          <select id="periodSelect" class="input">
+            <option value="today">اليوم</option>
+            <option value="week">هذا الأسبوع</option>
+            <option value="month" selected>هذا الشهر</option>
+            <option value="custom">مخصص</option>
+          </select>
+
+          <input id="customFrom" class="input" type="date" placeholder="من" />
+          <input id="customTo" class="input" type="date" placeholder="إلى" />
+          <button id="applyPeriodBtn" class="btn" type="button">تطبيق</button>
+        </div>
+
+        <div class="hint">تنسيق التاريخ: YYYY-MM-DD</div>
+      </div>
+
+      <div class="grid-3">
+        <div class="stat">
+          <div class="stat-label">إجمالي الدخل</div>
+          <div id="sumIncome" class="stat-value">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">إجمالي المصاريف</div>
+          <div id="sumExpenses" class="stat-value">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">المتبقي</div>
+          <div id="sumBalance" class="stat-value">—</div>
+          <div id="budgetHint" class="budget-hint"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">تنبيه الميزانية الشهرية</div>
+        <div id="budgetBarWrap" class="budget-wrap">
+          <div class="budget-bar">
+            <div id="budgetFill" class="budget-fill" style="width:0%"></div>
+          </div>
+          <div id="budgetText" class="budget-text">—</div>
+        </div>
+        <div class="hint">يظهر التحذير عند 80% وعند 100% من حد الشهر.</div>
+      </div>
+    </section>
+
+    <!-- INCOME -->
+    <section id="view-income" class="view" aria-label="الدخل">
+      <div class="card">
+        <div class="card-title">إضافة دخل</div>
+        <form id="incomeForm" class="form">
+          <div class="row">
+            <input id="incomeAmount" class="input" type="number" step="0.01" min="0" placeholder="المبلغ *" required />
+            <input id="incomeDate" class="input" type="date" required />
+          </div>
+          <div class="row">
+            <input id="incomeSource" class="input" type="text" placeholder="المصدر (اختياري)" />
+            <input id="incomeNotes" class="input" type="text" placeholder="ملاحظات (اختياري)" />
+          </div>
+          <button class="btn" type="submit">حفظ الدخل</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-title">قائمة الدخل</div>
+        <div class="row">
+          <input id="incomeSearch" class="input" type="search" placeholder="بحث بالمصدر/الملاحظات..." />
+          <input id="incomeFrom" class="input" type="date" />
+          <input id="incomeTo" class="input" type="date" />
+          <button id="incomeFilterBtn" class="btn btn-ghost" type="button">تصفية</button>
+        </div>
+
+        <div id="incomeList" class="list"></div>
+        <div id="incomeEmpty" class="empty hidden">لا توجد سجلات دخل.</div>
+      </div>
+    </section>
+
+    <!-- EXPENSES -->
+    <section id="view-expenses" class="view" aria-label="المصاريف">
+      <div class="card">
+        <div class="card-title">إضافة مصروف</div>
+        <form id="expenseForm" class="form">
+          <div class="row">
+            <input id="expenseName" class="input" type="text" placeholder="اسم المصروف/المنتج *" required />
+            <input id="expenseAmount" class="input" type="number" step="0.01" min="0" placeholder="المبلغ *" required />
+          </div>
+          <div class="row">
+            <input id="expenseDate" class="input" type="date" required />
+            <input id="expenseCategory" class="input" type="text" placeholder="التصنيف (اختياري)" />
+          </div>
+          <div class="row">
+            <select id="expensePay" class="input">
+              <option value="">طريقة الدفع (اختياري)</option>
+              <option value="cash">كاش</option>
+              <option value="card">بطاقة</option>
+              <option value="wallet">محفظة</option>
+            </select>
+            <input id="expenseNotes" class="input" type="text" placeholder="ملاحظات (اختياري)" />
+          </div>
+          <button class="btn" type="submit">حفظ المصروف</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-title">قائمة المصاريف</div>
+        <div class="row">
+          <input id="expenseSearch" class="input" type="search" placeholder="بحث بالاسم..." />
+          <input id="expenseFrom" class="input" type="date" />
+          <input id="expenseTo" class="input" type="date" />
+        </div>
+        <div class="row">
+          <input id="expenseCategoryFilter" class="input" type="text" placeholder="تصفية بالتصنيف..." />
+          <select id="expensePayFilter" class="input">
+            <option value="">كل طرق الدفع</option>
+            <option value="cash">كاش</option>
+            <option value="card">بطاقة</option>
+            <option value="wallet">محفظة</option>
+          </select>
+          <button id="expenseFilterBtn" class="btn btn-ghost" type="button">تصفية</button>
+        </div>
+
+        <div id="expenseList" class="list"></div>
+        <div id="expenseEmpty" class="empty hidden">لا توجد مصاريف.</div>
+      </div>
+    </section>
+
+    <!-- REPORTS -->
+    <section id="view-reports" class="view" aria-label="التقارير">
+      <div class="card">
+        <div class="card-title">ملخص شهري</div>
+        <div class="row">
+          <input id="reportMonth" class="input" type="month" />
+          <button id="runReportsBtn" class="btn" type="button">عرض التقرير</button>
+        </div>
+
+        <div class="grid-3">
+          <div class="stat">
+            <div class="stat-label">دخل الشهر</div>
+            <div id="repIncome" class="stat-value">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">مصاريف الشهر</div>
+            <div id="repExpenses" class="stat-value">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">صافي الشهر</div>
+            <div id="repNet" class="stat-value">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">المصاريف حسب التصنيف</div>
+        <div id="catList" class="list"></div>
+        <div id="catEmpty" class="empty hidden">لا توجد بيانات.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">أعلى 10 مصاريف</div>
+        <div id="top10List" class="list"></div>
+        <div id="top10Empty" class="empty hidden">لا توجد بيانات.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">رسم بياني بسيط (اختياري)</div>
+        <canvas id="chartCanvas" width="900" height="380" class="chart"></canvas>
+        <div class="hint">الرسم يعرض أعلى التصنيفات (حسب المبلغ).</div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="view-settings" class="view" aria-label="الإعدادات">
+      <div class="card">
+        <div class="card-title">العملة</div>
+        <div class="row">
+          <select id="currencySelect" class="input">
+            <option value="EGP">EGP (افتراضي)</option>
+            <option value="USD">USD</option>
+            <option value="SAR">SAR</option>
+            <option value="AED">AED</option>
+            <option value="EUR">EUR</option>
+          </select>
+          <button id="saveCurrencyBtn" class="btn" type="button">حفظ</button>
+        </div>
+        <div class="hint">يتم حفظ العملة محليًا على الجهاز.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">الميزانية الشهرية</div>
+        <div class="row">
+          <input id="monthlyBudget" class="input" type="number" step="0.01" min="0" placeholder="ضع حد ميزانية للشهر (اختياري)" />
+          <button id="saveBudgetBtn" class="btn" type="button">حفظ</button>
+        </div>
+        <div class="hint">تحذير عند 80%، وتنبيه عند 100%.</div>
+      </div>
+
+      <div class="card danger">
+        <div class="card-title">حذف كل البيانات</div>
+        <p class="danger-text">هذا سيحذف الدخل والمصاريف والإعدادات من الجهاز نهائيًا.</p>
+        <button id="clearAllBtn" class="btn btn-danger" type="button">مسح كل البيانات</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">حالة التطبيق</div>
+        <div class="status-row">
+          <span>الاتصال:</span>
+          <strong id="netStatus">—</strong>
+        </div>
+        <div class="status-row">
+          <span>وضع دون إنترنت بعد أول تحميل:</span>
+          <strong>مدعوم</strong>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL (Edit/Delete confirm + forms) -->
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="نافذة">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div id="modalTitle" class="modal-title">—</div>
+        <button id="modalClose" class="icon-btn" type="button" aria-label="إغلاق">✕</button>
+      </div>
+      <div id="modalBody" class="modal-body"></div>
+      <div id="modalActions" class="modal-actions"></div>
+    </div>
+  </div>
+
+  <script src="./db.js"></script>
+  <script src="./app.js"></script>
+  <script src="./sw-register.js"></script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+/* =====================
+   GLOBAL
+===================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  direction: rtl;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  background: #0b1220;
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+/* =====================
+   HEADER
+===================== */
+.app-header {
+  background: #111a2f;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #2a3555;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  background: #4ea1ff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #000;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: #9fb3ff;
+}
+
+/* =====================
+   TABS
+===================== */
+.tabs {
+  display: flex;
+  background: #0f1830;
+  padding: 8px;
+  gap: 6px;
+  overflow-x: auto;
+  border-bottom: 1px solid #2a3555;
+}
+
+.tab {
+  background: transparent;
+  border: 1px solid #2a3555;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tab.active {
+  background: #4ea1ff;
+  color: #000;
+  font-weight: bold;
+}
+
+/* =====================
+   CONTAINER & VIEWS
+===================== */
+.container {
+  padding: 12px;
+}
+
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+}
+
+/* =====================
+   CARDS
+===================== */
+.card {
+  background: #111a2f;
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #2a3555;
+}
+
+.card-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* =====================
+   FORM ELEMENTS
+===================== */
+.input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #2a3555;
+  background: #0b1220;
+  color: #fff;
+}
+
+.input::placeholder {
+  color: #9fb3ff;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 600px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =====================
+   BUTTONS
+===================== */
+.btn {
+  width: 100%;
+  padding: 10px;
+  background: #4ea1ff;
+  color: #000;
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid #2a3555;
+  color: #fff;
+}
+
+.btn-danger {
+  background: #ff4d4d;
+  color: #fff;
+}
+
+/* =====================
+   STATS (DASHBOARD)
+===================== */
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 800px) {
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat {
+  background: #0f1830;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid #2a3555;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #9fb3ff;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 6px;
+}
+
+/* =====================
+   LIST ITEMS
+===================== */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item {
+  background: #0f1830;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #2a3555;
+}
+
+.item b {
+  font-size: 16px;
+}
+
+.item small {
+  color: #9fb3ff;
+}
+
+/* =====================
+   EMPTY STATE
+===================== */
+.empty {
+  text-align: center;
+  color: #9fb3ff;
+  padding: 10px;
+  border: 1px dashed #2a3555;
+  border-radius: 10px;
+}
+
+/* =====================
+   MODAL
+===================== */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-card {
+  background: #111a2f;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 14px;
+  border: 1px solid #2a3555;
+}
+
+.modal-head {
+  padding: 10px;
+  border-bottom: 1px solid #2a3555;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-body {
+  padding: 10px;
+}
+
+.modal-actions {
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+/* =====================
+   UTILITIES
+===================== */
+.hidden {
+  display: none;
+}
